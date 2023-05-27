@@ -1,39 +1,5 @@
 var canvas = document.getElementById('canvas');
 
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
-
-function keyDownHandler(e) {
-    if(e.key == 37 || e.key == "ArrowRight") {
-        rightPressed = true;
-    }
-    else if(e.key == 39 || e.key == "ArrowLeft") {
-        leftPressed = true;
-    }
-    else if(e.key == 38 || e.key == "ArrowUp") {
-        upPressed = true;
-    }
-    else if(e.key == 40 || e.key == "ArrowDown") {
-        downPressed = true;
-    }
-}
-
-
-function keyUpHandler(e) {
-    if(e.key == 37 || e.key == "ArrowRight") {
-        rightPressed = false;
-    }
-    else if(e.key == 39 || e.key == "ArrowLeft") {
-        leftPressed = false;
-    }
-    else if(e.key == 38 || e.key == "ArrowUp") {
-        upPressed = false;
-    }
-    else if(e.key == 40 || e.key == "ArrowDown") {
-        downPressed = false;
-    }
-}
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 var ctx = canvas.getContext('2d');
@@ -41,10 +7,6 @@ var raf;
 
 let g = 9.8;
 let f = -0.02;
-let rightPressed = false;
-let leftPressed = false;
-let upPressed = false;
-let downPressed = false;
 
 class Vector {
     constructor(x, y) {
@@ -67,6 +29,10 @@ class Vector {
     div(scalar) {
         return new Vector(this.x / scalar, this.y / scalar);
     }
+
+    dist(other) {
+        return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
+    }
 }
 
 class Circle {
@@ -79,12 +45,6 @@ class Circle {
     }
 
     update() {
-        if (leftPressed) {
-            this.acc.x = -5;
-        } else if (rightPressed) {
-            this.acc.x = 5;
-        }
-
         this.acc.x += this.vel.x * f;
         this.acc.y = g;
         this.vel = this.vel.add(this.acc);
@@ -136,28 +96,29 @@ function draw() {
     ball.draw();
     ball.update();
 
+
+
     raf = window.requestAnimationFrame(draw);
 }
 
-canvas.addEventListener('mousemove', function (e) {
-    if (!running) {
-        clear();
-        ball.x = e.clientX;
-        ball.y = e.clientY;
-        ball.draw();
-    }
-});
+// canvas.addEventListener('mousemove', function (e) {
+//     clear();
+//     ball.x = e.clientX;
+//     ball.y = e.clientY;
+//     ball.draw();
+// });
 
 canvas.addEventListener('click', function (e) {
-    if (!running) {
+    let mouse = new Vector(e.clientX, e.clientY);
+
+    if (mouse.dist(ball.pos) < ball.radius) {
+        ball.pos = mouse;
         raf = window.requestAnimationFrame(draw);
-        running = true;
     }
 });
 
 canvas.addEventListener('mouseout', function (e) {
     window.cancelAnimationFrame(raf);
-    running = false;
 });
 
 // canvas.addEventListener('draw', function (e) {
