@@ -90,6 +90,7 @@ class Circle(sprite.Sprite):
             angle = atan2(self.pos.y - other.pos.y, self.pos.x - other.pos.x)
             self.vel = Vec(cos(angle), sin(angle))
             other.vel = Vec(-cos(angle), -sin(angle))
+
             energy_after = self.mass * abs(self.vel) ** 2 / 2 + other.mass * abs(other.vel) ** 2 / 2
             factor = sqrt(energy_before / energy_after)
             self.vel *= factor
